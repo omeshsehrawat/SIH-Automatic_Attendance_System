@@ -1,1 +1,1 @@
-# SIH-Automatic_Attendance_System
+# Automatic Attendance System
