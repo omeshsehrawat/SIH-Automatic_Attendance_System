@@ -52,7 +52,7 @@ export const lastDetection = {
 
 export const navigationItems = [
   { id: "dashboard", label: "Dashboard", icon: Users },
-  { id: "camera", label: "Camera", icon: Camera },
+  { id: "register", label: "Register", icon: Camera },
   { id: "database", label: "Database", icon: Database },
   { id: "settings", label: "Settings", icon: Settings },
 ];
