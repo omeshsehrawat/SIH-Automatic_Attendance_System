@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 import Settings from "./pages/admin/Settings"
 import { useUserStore } from "./store/user"
-import { User } from "lucide-react"
 import UserDashboard from "./pages/user/UserDashboard"
 
 function App() {
