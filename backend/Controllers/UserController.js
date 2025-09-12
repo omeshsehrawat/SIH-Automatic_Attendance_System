@@ -71,13 +71,18 @@ const loginController = async (req, res) => {
     if (!user) {
       return res.status(401).json({ err: "user not exist" });
     }
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ err: "Invalid credentials" });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(password, salt);
+    if (!user.password) {
+      user.password = hashedPass;
+      await user.save();
+    } else {
+      const isPasswordCorrect = await bcrypt.compare(password, user.password);
+      if (!isPasswordCorrect) {
+        return res.status(401).json({ err: "Invalid credentials" });
+      }
     }
     generateCookie(user._id, res);
-    console.log("User found:", user);
-    console.log(user);
     return res.status(200).json({
       _id: user._id,
       fullname: user.name,
