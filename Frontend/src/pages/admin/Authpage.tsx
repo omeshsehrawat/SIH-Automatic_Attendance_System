@@ -2,7 +2,7 @@ import React, { use, useState } from 'react';
 import { Eye, EyeOff, Activity, User, Mail, Lock, ArrowRight } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router';
-import { useUserStore } from '../store/user';
+import { useUserStore } from '../../store/user';
 
 interface FormData {
     name?: string;
@@ -39,6 +39,7 @@ const AuthPages: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(formData)
             });
             const data = await res.json();

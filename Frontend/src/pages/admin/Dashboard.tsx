@@ -1,26 +1,31 @@
-import { useState } from "react"
+import Content from "../../component/Content"
+import { useState, useRef } from "react"
 import {
     Menu,
     Activity,
     X,
 } from "lucide-react"
-import { navigationItems } from "../data/utils"
+import { navigationItems } from "../../data/utils"
 import { useNavigate } from "react-router"
-import RegisterContent from "../component/RegisterContent"
-import { useUserStore } from "../store/user"
-
-
-function Register() {
-    const { user } = useUserStore()
-    if(user.role !== 'admin'){
-        window.location.href = '/auth';
+import { useUserStore } from "../../store/user"
+function Dashboard() {
+    const { user } = useUserStore();
+    const route = useNavigate()
+    if (user.role !== 'admin') {
+        route('/auth');
     }
+    const [isDetecting, setIsDetecting] = useState(false)
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const route = useNavigate();
+    const [isVideoOpen, setIsVideoOpen] = useState(false)
+    const [_, setIsVideoPlaying] = useState(false)
+    const videoRef = useRef<HTMLVideoElement>(null)
     const handleClick = (id: String) => {
-        route(`/admin/${id}`);
+        route(`/admin/` + id);
     }
+
     const currentRoute = location.pathname.split("/")[2]
+
+
     return (
         <div className="min-h-screen bg-white flex">
             <div
@@ -47,7 +52,7 @@ function Register() {
                                 key={item.id}
                                 onClick={() => handleClick(item.id)}
                                 className={`${sidebarOpen ? "w-full justify-start px-4" : "w-12 justify-center"} h-12 flex items-center rounded-xl transition-all duration-200 mb-3 
-                                    ${currentRoute.toLowerCase() === item.id.toLowerCase()
+                                ${currentRoute.toLowerCase() === item.id.toLowerCase()
                                         ? "bg-white text-blue-600 shadow-lg"
                                         : "text-blue-100 hover:text-white hover:bg-blue-700"
                                     }`
@@ -72,14 +77,14 @@ function Register() {
                         </button>
 
                         <div className="text-right ml-auto">
-                            <h1 className="text-3xl font-bold text-blue-900">Register Overview</h1>
+                            <h1 className="text-3xl font-bold text-blue-900">Dashboard Overview</h1>
                         </div>
                     </div>
                 </header>
-                <RegisterContent />
+                <Content isVideoOpen={isVideoOpen} videoRef={videoRef} isDetecting={isDetecting} setIsDetecting={setIsDetecting} setIsVideoOpen={setIsVideoOpen} setIsVideoPlaying={setIsVideoPlaying} />
             </div>
         </div>
     )
 }
 
-export default Register
+export default Dashboard;

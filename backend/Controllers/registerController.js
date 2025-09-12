@@ -8,49 +8,115 @@ export const registerController = async (req, res) => {
       enrollment,
       batch,
       email,
-      subjectName,
-      classTime,
-      code,
-      classDays,
       instructor,
+      subjects,  
     } = req.body;
+
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
     }
-    if (!name || !email || !enrollment || !code || !subjectName) {
+
+    let parsedSubjects;
+    try {
+      parsedSubjects = JSON.parse(subjects);
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid subjects data format" });
+    }
+
+    console.log("Parsed subjects:", parsedSubjects);
+
+    if (!name || !email || !enrollment || !instructor) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const user = await User.findOne({ $or: [{ email }, { enrollment }] });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
+    if (!Array.isArray(parsedSubjects) || parsedSubjects.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one subject is required" });
     }
-    let subject = await Subject.findOne({ Code: code });
-    if (!subject) {
-      subject = new Subject({
-        Code: code,
-        name: subjectName,
-        instructor,
-        classTime,
-        classDays,
+
+    for (let i = 0; i < parsedSubjects.length; i++) {
+      const subject = parsedSubjects[i];
+      if (
+        !subject.subjectId ||
+        !subject.classStartTime ||
+        !subject.classEndTime ||
+        !subject.classDays ||
+        subject.classDays.length === 0
+      ) {
+        return res.status(400).json({
+          message: `Subject ${
+            i + 1
+          } is missing required fields (subject selection, start time, end time, or class days)`,
+        });
+      }
+    }
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { enrollment }],
+    });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({
+          message: "User already exists with this email or enrollment number",
+        });
+    }
+
+    const userSubjects = [];
+    const subjectSchedules = [];
+
+    for (const subjectData of parsedSubjects) {
+      const subject = await Subject.findById(subjectData.subjectId);
+      if (!subject) {
+        return res.status(400).json({
+          message: `Subject with ID ${subjectData.subjectId} not found`,
+        });
+      }
+      userSubjects.push(subject._id.toString());
+      subjectSchedules.push({
+        subjectId: subject._id,
+        subjectCode: subject.Code,
+        subjectName: subject.name,
+        classStartTime: subjectData.classStartTime,
+        classEndTime: subjectData.classEndTime,
+        classDays: subjectData.classDays,
+        instructor: instructor, 
       });
-      await subject.save();
     }
-    console.log("Subject", subject._id.toString());
+
+    console.log("User subjects:", userSubjects);
+    console.log("Subject schedules:", subjectSchedules);
     const newUser = new User({
       fullname: name,
       ern: enrollment,
       batch,
       email,
       profilePic: req.file.path,
-      subjects: [subject._id.toString()],
+      subjects: userSubjects,
+      subjectSchedules: subjectSchedules,  
     });
+
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({
+      message: "User registered successfully",
+      data: {
+        userId: newUser._id,
+        subjects: subjectSchedules.length,
+        enrolledSubjects: subjectSchedules.map((s) => ({
+          code: s.subjectCode,
+          name: s.subjectName,
+          schedule: `${s.classStartTime} - ${s.classEndTime}`,
+          days: s.classDays.join(", "),
+        })),
+      },
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error registering user" });
+    console.error("Registration error:", error);
+    res
+      .status(500)
+      .json({ message: "Error registering user", error: error.message });
   }
 };
 
@@ -92,7 +158,7 @@ export const getStudentsBySubject = async (req, res) => {
     const { subjectId } = req.params;
     console.log("Fetching students by subject ID:", subjectId);
     const students = await User.find({ subjects: subjectId }).select(
-      'fullname ern batch email profilePic createdAt'
+      "fullname ern batch email profilePic createdAt"
     );
     console.log("Students found:", students);
     res.status(200).json(students);
