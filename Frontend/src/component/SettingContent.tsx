@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Filter, Search, XCircle, ChevronDown, ChevronRight, Users, BookOpen, Clock, User, Save, Calendar } from 'lucide-react';
+import { CheckCircle, Search, XCircle, Users, BookOpen, Clock, User, Save } from 'lucide-react';
 
 interface Student {
     _id: string;
@@ -107,8 +107,6 @@ const SettingsContent: React.FC = () => {
             setError(err instanceof Error ? err.message : 'Failed to fetch students');
         }
     };
-
-    // Fetch attendance records for a specific date and subject
     const fetchAttendanceForDate = async (subjectId: string, date: string) => {
         try {
             const response = await fetch(`http://localhost:5000/api/register/attendance/${subjectId}/${date}`, {
@@ -123,7 +121,6 @@ const SettingsContent: React.FC = () => {
                 setAttendanceRecords(attendanceData);
                 mergeStudentsWithAttendance(students, attendanceData);
             } else {
-                // No attendance records for this date yet
                 setAttendanceRecords([]);
                 mergeStudentsWithAttendance(students, []);
             }

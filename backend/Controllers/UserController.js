@@ -12,11 +12,6 @@ const signupController = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
-    if (user) {
-      res.status(404).json({ err: "user alreay exist" });
-    }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
@@ -24,11 +19,26 @@ const signupController = async (req, res) => {
     if (email === "admin@gmail.com") {
       isAdmin = true;
     }
+    if (user.password) {
+      res.status(404).json({ err: "user alreay exist" });
+    } else {
+      user.fullname = name;
+      user.password = hashedPass;
+      user.role = isAdmin ? "admin" : "user";
+      await user.save();
+      generateCookie(user._id, res);
+      return res.status(200).json({
+        _id: user._id,
+        email: user.email,
+        fullname: user.name,
+        role: user.role,
+      });
+    }
     const newUser = new User({
       fullname: name,
       email,
       password: hashedPass,
-      role:isAdmin ? "admin" : "user"
+      role: isAdmin ? "admin" : "user",
     });
 
     await newUser.save();
@@ -39,7 +49,7 @@ const signupController = async (req, res) => {
         _id: newUser._id,
         email: newUser.email,
         fullname: newUser.name,
-        role: newUser.role
+        role: newUser.role,
       });
     } else {
       res.status(400).json({ error: "Invalid user data" });
@@ -76,7 +86,7 @@ const loginController = async (req, res) => {
       subjects: user.subjects,
       batch: user.batch,
       ern: user.ern,
-      profilePic: user.profilePic
+      profilePic: user.profilePic,
     });
   } catch (err) {
     console.error(err);
@@ -96,8 +106,4 @@ const logoutController = async (req, res) => {
   }
 };
 
-export {
-  signupController,
-  loginController,
-  logoutController,
-};
+export { signupController, loginController, logoutController };

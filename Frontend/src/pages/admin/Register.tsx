@@ -4,27 +4,25 @@ import {
     Activity,
     X,
 } from "lucide-react"
-import { navigationItems } from "../data/utils"
+import { navigationItems } from "../../data/utils"
 import { useNavigate } from "react-router"
-import { useUserStore } from "../store/user"
-import SettingContent from "../component/SettingContent"
+import RegisterContent from "../../component/RegisterContent"
+import { useUserStore } from "../../store/user"
 
-function Settings() {
-    const { user, removeUser } = useUserStore();
-    const route = useNavigate()
-    if (user.role !== 'admin') {
-        route('/auth');
+
+function Register() {
+    const { user } = useUserStore()
+    if(user.role !== 'admin'){
+        window.location.href = '/auth';
     }
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const route = useNavigate();
     const handleClick = (id: String) => {
-        route(`/admin/` + id);
+        route(`/admin/${id}`);
     }
-
     const currentRoute = location.pathname.split("/")[2]
-
-
     return (
-        <div className=" min-h-screen bg-white flex">
+        <div className="min-h-screen bg-white flex">
             <div
                 className={`${sidebarOpen ? "w-64" : "w-20"} bg-blue-600 flex flex-col border-r border-blue-500 transition-all duration-300 ease-in-out`}
             >
@@ -73,24 +71,15 @@ function Settings() {
                             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
 
-                        <div className="text-left mr-auto">
-                            <h1 className="text-3xl font-bold text-blue-900">Setting </h1>
+                        <div className="text-right ml-auto">
+                            <h1 className="text-3xl font-bold text-blue-900">Register Overview</h1>
                         </div>
-                        <button
-                            onClick={() => {
-                                removeUser();
-                                route('/auth');
-                            }}
-                            className="flex cursor-pointer ml-auto items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 shadow-lg border border-blue-500 font-medium"
-                        >
-                            Logout
-                        </button>
                     </div>
                 </header>
-                <SettingContent />
+                <RegisterContent />
             </div>
         </div>
     )
 }
 
-export default Settings
+export default Register

@@ -1,4 +1,4 @@
-import { Users, Camera, Database, Settings } from "lucide-react";
+import { Users, Database, Settings, UserPlus, LayoutDashboard } from "lucide-react";
 
 export const attendanceData = [
   {
@@ -44,15 +44,15 @@ export const attendanceData = [
 ];
 
 export const lastDetection = {
-  name: "Alex Johnson",
+  name: "Pushkar Chaturvedi",
   enrollment: "231b356",
   time: "9:30 AM",
   avatar: "/professional-student-avatar.jpg",
 };
 
 export const navigationItems = [
-  { id: "dashboard", label: "Dashboard", icon: Users },
-  { id: "register", label: "Register", icon: Camera },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "register", label: "Register", icon: UserPlus },
   { id: "database", label: "Database", icon: Database },
   { id: "settings", label: "Settings", icon: Settings },
 ];
