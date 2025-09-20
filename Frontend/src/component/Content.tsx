@@ -23,29 +23,39 @@ function Content({
     setIsVideoOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setIsVideoPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    const handleVideoToggle = async () => {
+    // const handleVideoToggle = async () => {
+    //     if (!isVideoOpen) {
+    //         try {
+    //             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+    //             if (videoRef?.current) {
+    //                 videoRef.current.srcObject = stream;
+    //                 await videoRef.current.play();
+    //                 setIsVideoOpen(true);
+    //                 setIsVideoPlaying(true);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error accessing camera:", error);
+    //         }
+    //     } else {
+    //         if (videoRef?.current && videoRef.current.srcObject) {
+    //             const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+    //             tracks.forEach(track => track.stop());
+    //             videoRef.current.srcObject = null;
+    //         }
+    //         setIsVideoOpen(false);
+    //         setIsVideoPlaying(false);
+    //     }
+    // };
+    const handleVideoToggle = () => {
         if (!isVideoOpen) {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                if (videoRef?.current) {
-                    videoRef.current.srcObject = stream;
-                    await videoRef.current.play();
-                    setIsVideoOpen(true);
-                    setIsVideoPlaying(true);
-                }
-            } catch (error) {
-                console.error("Error accessing camera:", error);
-            }
+            setIsVideoOpen(true);
+            setIsVideoPlaying(true);
         } else {
-            if (videoRef?.current && videoRef.current.srcObject) {
-                const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-                tracks.forEach(track => track.stop());
-                videoRef.current.srcObject = null;
-            }
             setIsVideoOpen(false);
             setIsVideoPlaying(false);
         }
     };
+
     return (
         <main className="flex-1 p-6 overflow-auto bg-gray-50">
             <div className="space-y-6">
@@ -63,14 +73,13 @@ function Content({
                         </div>
 
                         <div className="bg-blue-50 rounded-xl aspect-[4/2] flex items-center justify-center mb-6 relative overflow-hidden border border-blue-200">
-                            <video
-                                ref={videoRef}
-                                autoPlay
-                                playsInline
-                                muted
-                                className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 ${isVideoOpen ? "opacity-100" : "opacity-0"
-                                    }`}
+                            <img
+                                src={isVideoOpen ? "/video_feed" : ""}
+                                alt="Live Camera"
+                                className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 ${isVideoOpen ? "opacity-100" : "opacity-0"}`}
                             />
+
+
 
                             {!isVideoOpen && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-blue-50">

@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Settings from "./pages/admin/Settings"
 import { useUserStore } from "./store/user"
 import UserDashboard from "./pages/user/UserDashboard"
+import VideoCall from "./pages/Video"
 
 function App() {
   const { user } = useUserStore();
@@ -30,6 +31,7 @@ function App() {
         }
         {/* <Route path="*" element={<Navigate to={user ? `/${user.role}/dashboard` : "/auth"} />} /> */}
         <Route path="*" element={<Navigate to={ "/auth"} />} />
+        <Route path="/video" element={<VideoCall/>} />
       </Routes>
       <ToastContainer />
     </>
