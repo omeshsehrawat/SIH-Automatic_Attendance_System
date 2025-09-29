@@ -23,3 +23,6 @@ This issue affects over 50% of rural schools, impacting millions of students and
 
 ## Supporting Data
 Annual Status of Education Report (ASER) 2024, highlighting administrative challenges in rural schools.
+
+## Documentation
+- [JUETHack-2025](https://docs.google.com/presentation/d/1E0STlcdiM-M8Cmj5ogg_WKO7PI7f4m476eeCyF7Sxjs/edit?usp=sharing)
